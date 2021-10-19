@@ -28,22 +28,13 @@ namespace AssetQuote.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<WeatherForecast>> Get()
+        public async Task<IEnumerable<Asset>> Get()
         {
             var teste = await _assetService.AddAsset(new Asset("Name"));
 
             var all = await _assetService.GetAllAssets();
-
-            var rng = new Random();
-            var tt = Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
-
-            return await Task.FromResult(tt);
+           
+            return await Task.FromResult(all);
         }
     }
 }
