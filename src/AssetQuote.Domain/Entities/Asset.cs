@@ -1,13 +1,8 @@
 namespace AssetQuote.Domain.Entities
 {
-  public class Asset
+    public class Asset : BaseEntity
     {
-      public Asset( string name)
-      {
-        Name = name;
-      }
-
-      public int Id { get; private set; }
-      public string Name { get; private set; }
+        public string Name { get; private set; }
+        public string Code { get; set; }
     }
 }

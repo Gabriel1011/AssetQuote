@@ -1,10 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AssetQuote.Domain.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace AssetQuote.Domain.Interfaces
+namespace AssetQuote.Domain.Interfaces.Services
 {
     public interface IAssetService
     {
