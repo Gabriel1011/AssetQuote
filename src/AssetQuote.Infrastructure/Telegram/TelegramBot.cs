@@ -21,7 +21,7 @@ namespace AssetQuote.Infrastructure.Telegram
 
         public async Task Send()
         {
-            var botClient = new TelegramBotClient("1280036612:AAGnukPFuWVC77XUCVH-bHjFTWgUvHtN2Fs");
+            var botClient = new TelegramBotClient("{BOT-KEY}");
 
             var me = await botClient.GetMeAsync();
             Console.WriteLine(
