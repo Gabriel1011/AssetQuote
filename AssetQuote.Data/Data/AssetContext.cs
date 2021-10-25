@@ -17,7 +17,7 @@ namespace AssetQuote.Infrastructure.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("filename=../db.sqlite");
+            optionsBuilder.UseSqlite("filename=../db2.sqlite");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

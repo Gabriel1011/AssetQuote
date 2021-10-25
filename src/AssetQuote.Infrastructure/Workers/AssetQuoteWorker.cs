@@ -3,7 +3,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AssetQuote.Domain.Workers
+namespace AssetQuote.Infrastructure.Workers
 {
     public class AssetQuoteWorker : BackgroundService
     {
