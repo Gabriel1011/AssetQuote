@@ -13,7 +13,13 @@ namespace AssetQuote.Data.Mappings
             builder.Property(p => p.Name).HasColumnType("VARCHAR(200)").IsRequired();
             builder.Property(p => p.Code).HasColumnType("VARCHAR(200)").IsRequired();
 
-            builder.HasIndex(p => p.Code).HasDatabaseName("indx_code_asset");
+            builder
+                .HasMany(p => p.BotThreads)
+                .WithMany(p=>p.Assets);
+
+            builder
+                .HasIndex(p => p.Code)
+                .HasDatabaseName("indx_code_asset");
         }
     }
 }

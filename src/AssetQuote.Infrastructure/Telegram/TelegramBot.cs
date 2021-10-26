@@ -1,4 +1,6 @@
-﻿using AssetQuote.Domain.Interfaces.Services;
+﻿using AssetQuote.Domain.Entities;
+using AssetQuote.Domain.Entities.Enuns;
+using AssetQuote.Domain.Interfaces.Services;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,7 +23,7 @@ namespace AssetQuote.Infrastructure.Telegram
 
         public async Task Send()
         {
-            var botClient = new TelegramBotClient("{BOT-KEY}");
+            var botClient = new TelegramBotClient("1280036612:AAGnukPFuWVC77XUCVH-bHjFTWgUvHtN2Fs");
 
             var me = await botClient.GetMeAsync();
             Console.WriteLine(
@@ -66,8 +68,16 @@ namespace AssetQuote.Infrastructure.Telegram
 
                 await botClient.SendTextMessageAsync(
                     chatId: chatId,
-                    await _botService.StartContact()
-                );
+                    await _botService.StartCommunication(new BotThread
+                    {
+                        ChatId = chatId.ToString(),
+                        FirstName = update.Message.From.FirstName,
+                        LastName = update.Message.From.LastName,
+                        UserName = update.Message.From.Username,
+                        LastMessage = update.Message.Text,
+                        BotStep = BotStep.Start
+                    })
+                ); ;
             }
         }
     }

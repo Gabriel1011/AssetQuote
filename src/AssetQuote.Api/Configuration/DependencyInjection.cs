@@ -15,12 +15,17 @@ namespace AssetQuote.Api.Configuration
         public static void AddDependencyInjection(this IServiceCollection services)
         {
             services.AddTransient<IAssetService, AssetService>();
-            services.AddTransient<IAssetRepository, AssetRepository>();
             services.AddTransient<IBotService, BotService>();
+            services.AddTransient<ICreateAssetService, CreateAssetService>();
+            services.AddTransient<IConsultAssetService, ConsultAssetService>();
+
+            services.AddTransient<IAssetRepository, AssetRepository>();
+            services.AddTransient<IBotThreadRepository, BotThreadRepository>();
+
             services.AddTransient<IBot, TelegramBot>();
 
             services.AddDbContext<AssetContext>();
-            services.AddHostedService<AssetQuoteWorker>();
+            //services.AddHostedService<AssetQuoteWorker>();
             services.AddHostedService<BotWorker>();
         }
     }

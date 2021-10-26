@@ -42,11 +42,11 @@ namespace AssetQuote.Data.Repositories
             await ContextoBase.Commit();
         }
 
-        public async Task<IEnumerable<T>> Search(Expression<Func<T, bool>> filter) => await _entidade.Where(filter).AsNoTracking().ToListAsync();
-
+        public async Task<IEnumerable<T>> Where(Expression<Func<T, bool>> filter) => await _entidade.Where(filter).AsNoTracking().ToListAsync();
+        public async Task<T> FindBy(Expression<Func<T, bool>> filter) => await _entidade.FirstOrDefaultAsync(filter);
+        public async Task<bool> Any(Expression<Func<T, bool>> filter) => await _entidade.AsNoTracking().AnyAsync(filter);
         public async Task<T> Find(Guid id) => await _entidade.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
         public async Task<IEnumerable<T>> All() => await _entidade.AsNoTracking().ToListAsync();
-
         public async Task DisposeAsync() => await Task.Run(() => { ContextoBase?.Dispose();  }); 
 
     }

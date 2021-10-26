@@ -27,8 +27,6 @@ namespace AssetQuote.Api.Controllers
         [HttpGet]
         public async Task<IEnumerable<Asset>> Get()
         {
-            var teste = await _assetService.AddAsset(new Asset("Name", "PETR4"));
-
             var all = await _assetService.GetAllAssets();
 
             return await Task.FromResult(all);
