@@ -22,7 +22,9 @@ namespace AssetQuote.Domain.Service
 
             thread = await _botRepository.GetBotThreadByChatId(thread.ChatId);
 
-            return await Task.FromResult(thread.Assets.Select(p => p.Code).Aggregate((A, B) => A + ", " + B));
+            var assets = thread.Assets.Select(p => $"Ativo: {p.Code} Valor: R$ {p.Valor} \nPorcentagem: {p.Porcentagem}% Valor Ocilação: R$ {p.ValorOcilacao}");
+
+            return await Task.FromResult(string.Join("\n\n", assets));
         }
     }
 }

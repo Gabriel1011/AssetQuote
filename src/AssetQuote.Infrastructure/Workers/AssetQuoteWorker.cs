@@ -1,4 +1,6 @@
-﻿using AssetQuote.Infrastructure.WebScraping;
+﻿using AssetQuote.Domain.Interfaces.Services;
+using AssetQuote.Infrastructure.WebScraping;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Threading;
@@ -8,21 +10,26 @@ namespace AssetQuote.Infrastructure.Workers
 {
     public class AssetQuoteWorker : BackgroundService
     {
+        private readonly IServiceProvider _serviceProvider;
+
+        public AssetQuoteWorker(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+        }
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            var scope = _serviceProvider.CreateScope();
+
+            GoogleScraping scopedProcessingService =
+                scope.ServiceProvider.GetRequiredService<GoogleScraping>();
+
             while (!stoppingToken.IsCancellationRequested)
             {
-                var scraping =  new GoogleScraping();
-
-                await scraping.ReadPage("OIBR3");
-                await scraping.ReadPage("PETR4");
-                await scraping.ReadPage("MXRF11");
-                await scraping.ReadPage("HGBS11 ");
-
-                //await Task.Run(() =>
-                //{
-                //    new GoogleScraping().ReadPage("");
-                //}, stoppingToken);
+               await Task.Run(async () =>
+               {
+                   await scopedProcessingService.UpdateQuote();
+               }, stoppingToken);
 
                 Thread.Sleep(TimeSpan.FromMinutes(5));
             }

@@ -25,6 +25,7 @@ namespace AssetQuote.Data.Repositories
         public async Task<T> Create(T entidade)
         {
             _entidade.Add(entidade);
+
             await ContextoBase.Commit();
             return entidade;
         }
@@ -32,6 +33,7 @@ namespace AssetQuote.Data.Repositories
         public async Task<T> Update(T entidade)
         {
             _entidade.Update(entidade);
+
             await ContextoBase.Commit();
             return entidade;
         }
@@ -46,7 +48,7 @@ namespace AssetQuote.Data.Repositories
         public async Task<T> FindBy(Expression<Func<T, bool>> filter) => await _entidade.FirstOrDefaultAsync(filter);
         public async Task<bool> Any(Expression<Func<T, bool>> filter) => await _entidade.AsNoTracking().AnyAsync(filter);
         public async Task<T> Find(Guid id) => await _entidade.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
-        public async Task<IEnumerable<T>> All() => await _entidade.AsNoTracking().ToListAsync();
+        public async Task<IEnumerable<T>> All() => await _entidade.ToListAsync();
         public async Task DisposeAsync() => await Task.Run(() => { ContextoBase?.Dispose();  }); 
 
     }
