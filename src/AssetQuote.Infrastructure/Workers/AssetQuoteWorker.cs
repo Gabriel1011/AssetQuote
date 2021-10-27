@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using AssetQuote.Infrastructure.WebScraping;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,12 +12,19 @@ namespace AssetQuote.Infrastructure.Workers
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await Task.Run(() =>
-                {
-                    Console.WriteLine("Teste");
-                }, stoppingToken);
+                var scraping =  new GoogleScraping();
 
-                Thread.Sleep(TimeSpan.FromSeconds(1));
+                await scraping.ReadPage("OIBR3");
+                await scraping.ReadPage("PETR4");
+                await scraping.ReadPage("MXRF11");
+                await scraping.ReadPage("HGBS11 ");
+
+                //await Task.Run(() =>
+                //{
+                //    new GoogleScraping().ReadPage("");
+                //}, stoppingToken);
+
+                Thread.Sleep(TimeSpan.FromMinutes(5));
             }
 
             await Task.CompletedTask;

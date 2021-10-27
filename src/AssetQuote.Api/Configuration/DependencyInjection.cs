@@ -25,7 +25,7 @@ namespace AssetQuote.Api.Configuration
             services.AddTransient<IBot, TelegramBot>();
 
             services.AddDbContext<AssetContext>();
-            //services.AddHostedService<AssetQuoteWorker>();
+            services.AddHostedService<AssetQuoteWorker>();
             services.AddHostedService<BotWorker>();
         }
     }
