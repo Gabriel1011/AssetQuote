@@ -1,6 +1,8 @@
 ﻿using AssetQuote.Domain.Entities;
 using AssetQuote.Domain.Interfaces.Repositories;
 using AssetQuote.Domain.Interfaces.Services;
+using AssetQuote.Infrastructure.Interfaces;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
 using System.Net;
@@ -8,25 +10,27 @@ using System.Threading.Tasks;
 
 namespace AssetQuote.Infrastructure.WebScraping
 {
-    public class GoogleScraping
+    public class GoogleScraping : IWebScraping
     {
         private readonly IAssetRepository _assetRepository;
+        private readonly IConfiguration _configuration;
 
-        public GoogleScraping(IAssetRepository assetRepository)
+        public GoogleScraping(IAssetRepository assetRepository, IConfiguration configuration)
         {
             _assetRepository = assetRepository;
+            _configuration = configuration;
         }
 
         public async Task<Asset> ReadPage(Asset asset)
         {
             await Task.Run(() =>
             {
-                var conexao = new WebClient();
-                var link = $@"https://www.google.com/finance/quote/{asset.Code}:BVMF";
-                var pag = conexao.DownloadString(link);
+                var link = string.Format(_configuration["WebScraping:GoogleUrl"], asset.Code);
+                var pag = new WebClient().DownloadString(link);
 
-                var indx = pag.Split(new char[] { '<', '>' });
-                var valores = indx.FirstOrDefault(p => p.Contains("\"BRL\",[")).Split(',')[8..11];
+                var valores = pag.Split(new char[] { '<', '>' })
+                .FirstOrDefault(p => p.Contains("\"BRL\",["))
+                .Split(',')[8..11];
 
                 asset.Valor = Convert.ToDouble(valores[0].Replace("[", "").Replace('.', ','));
                 asset.Porcentagem = Convert.ToDouble(valores[1].Replace('.', ','));

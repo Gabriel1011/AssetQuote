@@ -11,44 +11,48 @@ namespace AssetQuote.Data.Repositories
 {
     public class BaseRepository<T> where T : BaseEntity
     {
-        private readonly AssetContext _contextoBase;
-        private readonly DbSet<T> _entidade;
+        private readonly AssetContext _contextBase;
+        private readonly DbSet<T> _dbSet;
 
-        public AssetContext ContextoBase => _contextoBase;
+        public AssetContext ContextoBase => _contextBase;
 
         public BaseRepository(AssetContext context)
         {
-            _contextoBase = context;
-            _entidade = _contextoBase.Set<T>();
+            _contextBase = context;
+            _dbSet = _contextBase.Set<T>();
         }
 
-        public async Task<T> Create(T entidade)
+        public async Task<T> Create(T entity)
         {
-            _entidade.Add(entidade);
+            _dbSet.Add(entity);
 
             await ContextoBase.Commit();
-            return entidade;
+            return entity;
         }
 
-        public async Task<T> Update(T entidade)
+        public async Task<T> Update(T entity)
         {
-            _entidade.Update(entidade);
+            _dbSet.Update(entity);
+
+            _dbSet.Attach(entity);
+            _contextBase.Entry(entity).State = EntityState.Modified;
 
             await ContextoBase.Commit();
-            return entidade;
+            return entity;
         }
 
-        public async Task Delete(T entidade)
+        public async Task Delete(T entity)
         {
-            _entidade.Remove(entidade);
+            _dbSet.Attach(entity);
+            _dbSet.Remove(entity);
             await ContextoBase.Commit();
         }
 
-        public async Task<IEnumerable<T>> Where(Expression<Func<T, bool>> filter) => await _entidade.Where(filter).AsNoTracking().ToListAsync();
-        public async Task<T> FindBy(Expression<Func<T, bool>> filter) => await _entidade.FirstOrDefaultAsync(filter);
-        public async Task<bool> Any(Expression<Func<T, bool>> filter) => await _entidade.AsNoTracking().AnyAsync(filter);
-        public async Task<T> Find(Guid id) => await _entidade.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
-        public async Task<IEnumerable<T>> All() => await _entidade.ToListAsync();
+        public async Task<IEnumerable<T>> Where(Expression<Func<T, bool>> filter) => await _dbSet.Where(filter).AsNoTracking().ToListAsync();
+        public async Task<T> FindBy(Expression<Func<T, bool>> filter) => await _dbSet.FirstOrDefaultAsync(filter);
+        public async Task<bool> Any(Expression<Func<T, bool>> filter) => await _dbSet.AsNoTracking().AnyAsync(filter);
+        public async Task<T> Find(Guid id) => await _dbSet.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+        public async Task<IEnumerable<T>> All() => await _dbSet.ToListAsync();
         public async Task DisposeAsync() => await Task.Run(() => { ContextoBase?.Dispose();  }); 
 
     }

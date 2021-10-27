@@ -3,6 +3,7 @@ using AssetQuote.Domain.Interfaces.Repositories;
 using AssetQuote.Domain.Interfaces.Services;
 using AssetQuote.Domain.Service;
 using AssetQuote.Infrastructure.Data;
+using AssetQuote.Infrastructure.Interfaces;
 using AssetQuote.Infrastructure.Telegram;
 using AssetQuote.Infrastructure.WebScraping;
 using AssetQuote.Infrastructure.Workers;
@@ -19,12 +20,12 @@ namespace AssetQuote.Api.Configuration
             services.AddTransient<IBotService, BotService>();
             services.AddTransient<ICreateAssetService, CreateAssetService>();
             services.AddTransient<IConsultAssetService, ConsultAssetService>();
-            services.AddTransient<GoogleScraping, GoogleScraping>();
 
             services.AddTransient<IAssetRepository, AssetRepository>();
             services.AddTransient<IBotThreadRepository, BotThreadRepository>();
 
             services.AddTransient<IBot, TelegramBot>();
+            services.AddTransient<IWebScraping, GoogleScraping>();
 
             services.AddDbContext<AssetContext>(ServiceLifetime.Transient);
             services.AddHostedService<AssetQuoteWorker>();
