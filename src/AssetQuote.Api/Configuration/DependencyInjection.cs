@@ -20,6 +20,7 @@ namespace AssetQuote.Api.Configuration
             services.AddTransient<IBotService, BotService>();
             services.AddTransient<ICreateAssetService, CreateAssetService>();
             services.AddTransient<IConsultAssetService, ConsultAssetService>();
+            services.AddTransient<IRemoveAssetService, RemoveAssetService>();
 
             services.AddTransient<IAssetRepository, AssetRepository>();
             services.AddTransient<IBotThreadRepository, BotThreadRepository>();

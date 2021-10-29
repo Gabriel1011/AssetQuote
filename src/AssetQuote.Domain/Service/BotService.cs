@@ -14,17 +14,20 @@ namespace AssetQuote.Domain.Service
         private readonly IBotThreadRepository _botThreadRepository;
         private readonly ICreateAssetService _createAssetService;
         private readonly IConsultAssetService _consultAssetService;
+        private readonly IRemoveAssetService _removeAssetService;
 
 
-        public BotService(IAssetService assetService, 
-            ICreateAssetService createAssetService, 
-            IConsultAssetService consultAssetService,
+        public BotService(IAssetService assetService,
+            ICreateAssetService createAssetService,
+            IConsultAssetService consultAssetService, 
+            IRemoveAssetService removeAssetService,
             IBotThreadRepository bot) : base(bot)
         {
             _assetService = assetService;
             _botThreadRepository = bot;
             _createAssetService = createAssetService;
             _consultAssetService = consultAssetService;
+            _removeAssetService = removeAssetService;
         }
 
         public async Task<string> Process(BotThread thread) => thread.BotStep switch
@@ -33,8 +36,9 @@ namespace AssetQuote.Domain.Service
             BotStep.NewAsset => await _createAssetService.CreateNewAsset(thread),
             BotStep.CreantingAsset => await _createAssetService.ConfirmCreateNewAsset(thread),
             BotStep.ConfirmNewAsset => await _createAssetService.CreateNewAssetSuccess(thread),
-            BotStep.RemoveAsset => await Task.Run(() => { return "Remover Asset"; }),
+            BotStep.RemoveAsset => await _removeAssetService.StartDeletation(thread),
             BotStep.ConsultAsset => await _consultAssetService.ConsultAsset(thread),
+            BotStep.ConfirmRemoveAsset => await _removeAssetService.ConfirmDeletation(thread),
             _ => await AnswerStart(thread)
         };
 

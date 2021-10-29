@@ -17,5 +17,6 @@ namespace AssetQuote.Domain.Entities.Enuns
         ConsultingAsset = 22,
         RemovingAsset = 33,
         ConfirmNewAsset = 111,
+        ConfirmRemoveAsset = 333
     }
 }
