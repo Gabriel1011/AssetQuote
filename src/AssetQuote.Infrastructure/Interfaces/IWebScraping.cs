@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using AssetQuote.Domain.Entities;
+using System.Threading.Tasks;
 
 namespace AssetQuote.Infrastructure.Interfaces
 {

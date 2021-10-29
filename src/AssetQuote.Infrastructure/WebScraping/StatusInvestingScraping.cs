@@ -1,21 +1,21 @@
 ﻿using AssetQuote.Domain.Entities;
 using AssetQuote.Domain.Interfaces.Repositories;
-using AssetQuote.Domain.Interfaces.Services;
 using AssetQuote.Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace AssetQuote.Infrastructure.WebScraping
 {
-    public class GoogleScraping : IWebScraping
+    public class StatusInvestingScraping : IWebScraping
     {
         private readonly IAssetRepository _assetRepository;
         private readonly IConfiguration _configuration;
 
-        public GoogleScraping(IAssetRepository assetRepository, IConfiguration configuration)
+        public StatusInvestingScraping(IAssetRepository assetRepository, IConfiguration configuration)
         {
             _assetRepository = assetRepository;
             _configuration = configuration;
@@ -25,7 +25,7 @@ namespace AssetQuote.Infrastructure.WebScraping
         {
             await Task.Run(async () =>
             {
-                var link = string.Format(_configuration["WebScraping:GoogleUrl"], asset.Code);
+                var link = string.Format(_configuration["WebScraping:StatusInvestUrl"], asset.Code);
                 var pag = new WebClient().DownloadString(link);
 
                 var valores = pag.Split(new char[] { '<', '>' })
