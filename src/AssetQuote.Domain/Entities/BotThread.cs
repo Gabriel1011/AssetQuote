@@ -12,6 +12,7 @@ namespace AssetQuote.Domain.Entities
         public string Cellphone { get; set; }
         public BotStep BotStep { get; set; }
         public string LastMessage { get; set; }
+        public string LastAsset { get; set; }
         public List<Asset> Assets { get; set; }
     }
 }
