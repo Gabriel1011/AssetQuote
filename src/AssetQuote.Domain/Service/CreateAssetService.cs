@@ -22,9 +22,9 @@ namespace AssetQuote.Domain.Service
             return await Task.FromResult("Favor informar o código do ativo ou da criptomoeda!!");
         }
 
-        public async Task<string> ConfirmCreateNewAsset(BotThread thread)
+        public async Task<string> CreatingNewAsset(BotThread thread)
         {
-            await UpdateStep(thread, BotStep.ConfirmNewAsset);
+            await UpdateStep(thread, BotStep.Start);
 
             var asset = await _assetService.FindOrCreateByCode(new Asset
             {
@@ -34,14 +34,7 @@ namespace AssetQuote.Domain.Service
 
             await _assetService.ConnectChatAsset(thread, asset);
 
-            return await Task.FromResult($"Deseja monitorar o ativo/criptomoeda {thread.LastMessage}?\n1 - Sim\n2 - Não");
-        }
-
-        public async Task<string> CreateNewAssetSuccess(BotThread thread)
-        {
-            await UpdateStep(thread, BotStep.Start);
-
-            return await Task.FromResult("Ativo cadastrado com sucesso");
+            return await Task.FromResult($"{thread.LastMessage} criado com sucesso!!");
         }
 
     }

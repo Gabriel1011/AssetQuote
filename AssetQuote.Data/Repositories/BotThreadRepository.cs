@@ -2,6 +2,7 @@
 using AssetQuote.Domain.Interfaces.Repositories;
 using AssetQuote.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AssetQuote.Data.Repositories
@@ -18,5 +19,16 @@ namespace AssetQuote.Data.Repositories
             await _context.BotThread
             .Include(p => p.Assets)
             .FirstOrDefaultAsync(p => p.ChatId == chatId);
+
+        public async Task<bool> RemoveAsset(BotThread botThread, Asset asset)
+        {
+            botThread = await GetBotThreadByChatId(botThread.ChatId);
+
+            botThread.Assets.Remove(botThread.Assets.FirstOrDefault(p => p.Code == asset.Code));
+
+            await Commit();
+
+            return await Task.FromResult(true);
+        }
     }
 }

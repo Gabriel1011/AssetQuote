@@ -28,7 +28,7 @@ namespace AssetQuote.Api.Configuration
             services.AddTransient<IBot, TelegramBot>();
             services.AddTransient<IWebScraping, GoogleScraping>();
 
-            services.AddDbContext<AssetContext>(ServiceLifetime.Transient);
+            services.AddDbContext<AssetContext>(ServiceLifetime.Scoped);
             services.AddHostedService<AssetQuoteWorker>();
             services.AddHostedService<BotWorker>();
         }

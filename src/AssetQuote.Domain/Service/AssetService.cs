@@ -2,6 +2,7 @@ using AssetQuote.Domain.Entities;
 using AssetQuote.Domain.Interfaces.Repositories;
 using AssetQuote.Domain.Interfaces.Services;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AssetQuote.Domain.Service
@@ -33,9 +34,12 @@ namespace AssetQuote.Domain.Service
 
         public async Task ConnectChatAsset(BotThread thread, Asset asset)
         {
+            thread = await _botThreadRepository.GetBotThreadByChatId(thread.ChatId);
             thread.Assets ??= new List<Asset>();
-            thread.Assets.Add(asset);
+            
+            if (!thread.Assets.Any(p => p.Code == asset.Code)) thread.Assets.Add(asset);
+
             await _botThreadRepository.Update(thread);
-        }       
+        }
     }
 }

@@ -34,8 +34,7 @@ namespace AssetQuote.Domain.Service
         {
             BotStep.Start => await AnswerStart(thread),
             BotStep.NewAsset => await _createAssetService.CreateNewAsset(thread),
-            BotStep.CreantingAsset => await _createAssetService.ConfirmCreateNewAsset(thread),
-            BotStep.ConfirmNewAsset => await _createAssetService.CreateNewAssetSuccess(thread),
+            BotStep.CreantingAsset => await _createAssetService.CreatingNewAsset(thread),
             BotStep.RemoveAsset => await _removeAssetService.StartDeletation(thread),
             BotStep.ConsultAsset => await _consultAssetService.ConsultAsset(thread),
             BotStep.ConfirmRemoveAsset => await _removeAssetService.ConfirmDeletation(thread),

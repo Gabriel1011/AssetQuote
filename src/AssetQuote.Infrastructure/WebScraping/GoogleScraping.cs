@@ -32,8 +32,8 @@ namespace AssetQuote.Infrastructure.WebScraping
                 .FirstOrDefault(p => p.Contains("\"BRL\",["))
                 .Split(',')[8..11];
 
-                asset.Porcentagem = await ConvertValue(valores[1]);
                 asset.Valor = await ConvertValue(valores[0].Remove(0, 1));
+                asset.Porcentagem = await ConvertValue(valores[1]);
                 asset.ValorOcilacao = await ConvertValue(valores[2]);
 
             });

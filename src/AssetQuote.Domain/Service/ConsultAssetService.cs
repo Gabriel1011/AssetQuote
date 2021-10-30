@@ -24,7 +24,7 @@ namespace AssetQuote.Domain.Service
 
             var assets = thread.Assets.Select(p => $"Ativo: {p.Code} Valor: R$ {p.Valor} \nPorcentagem: {p.Porcentagem}% Valor Ocilação: R$ {p.ValorOcilacao}");
 
-            return await Task.FromResult(string.Join("\n\n", assets));
+            return await Task.FromResult(assets.Any() ? string.Join("\n\n", assets) : "Para consultar é necessário cadastrar um ativo antes.");
         }
     }
 }

@@ -30,7 +30,9 @@ namespace AssetQuote.Domain.Service
         {
             await UpdateStep(botThread, BotStep.Start);
 
-            var asset = await _assetRepository.FindBy(p => p.Code == botThread.LastMessage.ToUpper());
+            botThread = await _botRepository.GetBotThreadByChatId(botThread.ChatId);
+            var asset = botThread.Assets.FirstOrDefault(p => p.Code == botThread.LastMessage.ToUpper());
+
             if (asset == null) return await Task.FromResult("Você não tem esse ativo em sua lista.");
 
             return await RemoveAsset(botThread, asset);
@@ -38,11 +40,7 @@ namespace AssetQuote.Domain.Service
 
         private async Task<string> RemoveAsset(BotThread botThread, Asset asset)
         {
-            botThread = await _botRepository.GetBotThreadByChatId(botThread.ChatId);
-
-            botThread.Assets.Remove(botThread.Assets.FirstOrDefault(p => p.Code == asset.Code));
-
-            await _botRepository.Update(botThread);
+            await _botRepository.RemoveAsset(botThread, asset);
 
             return await Task.FromResult($"{asset.Code} removido com sucesso!");
         }
