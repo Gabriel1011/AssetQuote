@@ -4,6 +4,7 @@ using AssetQuote.Domain.Interfaces.Repositories;
 using AssetQuote.Domain.Interfaces.Services;
 using AssetQuote.Domain.Service.Base;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AssetQuote.Domain.Service
@@ -19,7 +20,7 @@ namespace AssetQuote.Domain.Service
 
         public BotService(IAssetService assetService,
             ICreateAssetService createAssetService,
-            IConsultAssetService consultAssetService, 
+            IConsultAssetService consultAssetService,
             IRemoveAssetService removeAssetService,
             IBotThreadRepository bot) : base(bot)
         {
@@ -61,7 +62,9 @@ namespace AssetQuote.Domain.Service
                 (BotStep)Enum.Parse(typeof(BotStep), thread.LastMessage) :
                 BotStep.Default;
 
-            return thread.BotStep == BotStep.Default ? await StartContact() : await Process(thread);
+            var steps = (BotStep[])Enum.GetValues(typeof(BotStep));
+
+            return thread.BotStep == BotStep.Default || !steps.Contains(thread.BotStep) ? await StartContact() : await Process(thread);
         }
 
     }
