@@ -19,20 +19,25 @@ namespace AssetQuote.Domain.Service
         public async Task<string> CreateNewAsset(BotThread thread)
         {
             await UpdateStep(thread, BotStep.CreantingAsset);
-            return await Task.FromResult("Favor informar o código do ativo ou da criptomoeda!!");
+            return await Task.FromResult("Favor informar o código do ativo ou da criptomoeda, é possível cadastrar vários ativos seprando-os por virgula. \n\n ex: VALE3,PETR4,MXRF11");
         }
 
         public async Task<string> CreatingNewAsset(BotThread thread)
         {
             await UpdateStep(thread, BotStep.Start);
 
-            var asset = await _assetService.FindOrCreateByCode(new Asset
-            {
-                Code = thread.LastMessage.ToUpper(),
-                Name = thread.LastMessage.ToUpper(),
-            });
+            var assets = thread.LastMessage.Split(',');
 
-            await _assetService.ConnectChatAsset(thread, asset);
+            foreach (var newAsset in assets)
+            {
+                var asset = await _assetService.FindOrCreateByCode(new Asset
+                {
+                    Code = newAsset.ToUpper(),
+                    Name = newAsset.ToUpper(),
+                });
+
+                await _assetService.ConnectChatAsset(thread, asset);
+            }           
 
             return await Task.FromResult($"{thread.LastMessage} criado com sucesso!!");
         }
