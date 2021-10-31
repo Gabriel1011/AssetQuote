@@ -30,15 +30,26 @@ namespace AssetQuote.Infrastructure.Workers
 
             while (!stoppingToken.IsCancellationRequested)
             {
-               await Task.Run(async () =>
-               {
-                   await scopedProcessingService.UpdateQuote();
-               }, stoppingToken);
+                if (!await CheckOpenIBOV()) continue;
+
+                await Task.Run(async () =>
+                {
+                    await scopedProcessingService.UpdateQuote();
+                }, stoppingToken);
 
                 Thread.Sleep(TimeSpan.FromMinutes(Convert.ToDouble(_configuration["WorkerTime:AssetQuote"])));
             }
 
             await Task.CompletedTask;
+        }
+
+        private async Task<bool> CheckOpenIBOV()
+        {
+            return await Task.Run(() =>
+            {
+                var now = DateTime.Now;
+                return Convert.ToInt32(_configuration["Quote:Start"]) > now.Hour && now.Hour < Convert.ToInt32(_configuration["Quote:end"]);
+            });
         }
     }
 }
