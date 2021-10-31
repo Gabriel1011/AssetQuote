@@ -32,7 +32,10 @@ namespace AssetQuote.Infrastructure.Data
             foreach (var entry in ChangeTracker.Entries().Where(entry => entry.State == EntityState.Added || entry.State == EntityState.Modified))
             {
                 if (entry.State == EntityState.Added)
+                {
                     entry.Property("CreatedAt").CurrentValue = DateTime.Now;
+                    entry.Property("Active").CurrentValue = true;
+                }
 
                 if (entry.State == EntityState.Modified)
                 {
