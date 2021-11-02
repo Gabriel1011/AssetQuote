@@ -8,13 +8,15 @@ using AssetQuote.Infrastructure.Telegram;
 using AssetQuote.Infrastructure.WebScraping;
 using AssetQuote.Infrastructure.Workers;
 using AssetQuote.Infrastructure.Workes;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AssetQuote.Api.Configuration
 {
     public static class DependencyInjection
     {
-        public static void AddDependencyInjection(this IServiceCollection services)
+        public static void AddDependencyInjection(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddTransient<IAssetService, AssetService>();
             services.AddTransient<IBotService, BotService>();
@@ -28,9 +30,12 @@ namespace AssetQuote.Api.Configuration
             services.AddTransient<IBot, TelegramBot>();
             services.AddTransient<IWebScraping, GoogleScraping>();
 
-            services.AddDbContext<AssetContext>(ServiceLifetime.Scoped);
+            services.AddDbContext<AssetContext>(options => 
+                options.UseNpgsql(configuration["dbContextSettings:ConnectionString"]));
+
             services.AddHostedService<AssetQuoteWorker>();
             services.AddHostedService<BotWorker>();
+
         }
     }
 }
