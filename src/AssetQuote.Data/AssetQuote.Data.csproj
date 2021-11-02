@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\AssetQuote.Domain\AssetQuote.Domain.csproj" />
+    <ProjectReference Include="..\AssetQuote.Domain\AssetQuote.Domain.csproj" />
   </ItemGroup>
 
 </Project>
