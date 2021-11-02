@@ -11,14 +11,13 @@ namespace AssetQuote.Infrastructure.Data
         public DbSet<Asset> Asset { get; set; }
         public DbSet<BotThread> BotThread { get; set; }
 
-        public AssetContext()
+        public AssetContext(DbContextOptions<AssetContext> option) : base(option)
         {
             Database.EnsureCreated();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("filename= db2.sqlite");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

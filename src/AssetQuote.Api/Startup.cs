@@ -20,7 +20,7 @@ namespace AssetQuote.Api
         {
 
             services.AddControllers();
-            services.AddDependencyInjection();
+            services.AddDependencyInjection(Configuration);
             services.AddSwaggerGenConfig();
         }
 
