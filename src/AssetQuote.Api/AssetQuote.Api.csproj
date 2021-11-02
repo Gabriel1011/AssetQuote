@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\AssetQuote.Data\AssetQuote.Data.csproj" />
+    <ProjectReference Include="..\AssetQuote.Data\AssetQuote.Data.csproj" />
     <ProjectReference Include="..\AssetQuote.Domain\AssetQuote.Domain.csproj" />
     <ProjectReference Include="..\AssetQuote.Infrastructure\AssetQuote.Infrastructure.csproj" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Design" Version="1.1.6" />
