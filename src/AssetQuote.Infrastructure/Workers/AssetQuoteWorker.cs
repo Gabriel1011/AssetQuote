@@ -30,8 +30,6 @@ namespace AssetQuote.Infrastructure.Workers
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                if (!await CheckOpenIBOV()) continue;
-
                 await Task.Run(async () =>
                 {
                     await scopedProcessingService.UpdateQuote();

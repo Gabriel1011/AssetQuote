@@ -27,7 +27,23 @@ namespace AssetQuote.Infrastructure.Data
             MapearPropriedadesEsquecidas(modelBuilder);
         }
 
-        public async Task<bool> Commit()
+        public async Task DetachAllEntities()
+        {
+            this.ChangeTracker.Clear();
+
+            var changedEntriesCopy = this.ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Added ||
+                            e.State == EntityState.Modified ||
+                            e.State == EntityState.Deleted)
+                .ToList();
+
+            foreach (var entry in changedEntriesCopy)
+                entry.State = EntityState.Detached;
+
+            await Task.CompletedTask;
+        }
+
+        public async Task Commit()
         {
             foreach (var entry in ChangeTracker.Entries().Where(entry => entry.State == EntityState.Added || entry.State == EntityState.Modified))
             {
@@ -44,7 +60,9 @@ namespace AssetQuote.Infrastructure.Data
                 }
             }
 
-            return await base.SaveChangesAsync() > 0;
+            await base.SaveChangesAsync();
+
+            await DetachAllEntities();
         }
 
         private void MapearPropriedadesEsquecidas(ModelBuilder modelBuilder)

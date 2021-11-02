@@ -15,10 +15,15 @@ namespace AssetQuote.Data.Repositories
             _context = context;
         }
 
-        public async Task<BotThread> GetBotThreadByChatId(string chatId) =>
-            await _context.BotThread
+        public async Task<BotThread> GetBotThreadByChatId(string chatId)
+        {
+            await _context.DetachAllEntities();
+
+            return await _context.BotThread
             .Include(p => p.Assets)
             .FirstOrDefaultAsync(p => p.ChatId == chatId);
+        }
+
 
         public async Task<bool> RemoveAsset(BotThread botThread, Asset asset)
         {
