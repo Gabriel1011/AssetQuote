@@ -23,7 +23,7 @@ namespace AssetQuote.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AssetContext).Assembly);
-            MapearPropriedadesEsquecidas(modelBuilder);
+            MapForgottenProperties(modelBuilder);
         }
 
         public async Task DetachAllEntities()
@@ -64,7 +64,7 @@ namespace AssetQuote.Infrastructure.Data
             await DetachAllEntities();
         }
 
-        private void MapearPropriedadesEsquecidas(ModelBuilder modelBuilder)
+        private void MapForgottenProperties(ModelBuilder modelBuilder)
         {
 
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
