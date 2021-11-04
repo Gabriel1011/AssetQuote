@@ -4,6 +4,7 @@ using AssetQuote.Domain.Interfaces.Services;
 using AssetQuote.Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -38,7 +39,8 @@ namespace AssetQuote.Infrastructure.WebScraping
 
             });
 
-            async Task<double> ConvertValue(string value) => await Task.FromResult(Math.Round(Convert.ToDouble(value.Replace('.', ',')), 2));
+            async Task<double> ConvertValue(string value) =>
+                await Task.FromResult(Math.Round(Convert.ToDouble(value.Replace(".", ","), new CultureInfo("pt-BR")), 2));
 
             return await Task.FromResult(asset);
         }
