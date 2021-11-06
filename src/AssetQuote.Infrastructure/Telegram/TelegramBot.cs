@@ -2,6 +2,8 @@
 using AssetQuote.Domain.Entities.Enuns;
 using AssetQuote.Domain.Interfaces.Services;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Sentry;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,11 +19,15 @@ namespace AssetQuote.Infrastructure.Telegram
     {
         private readonly IBotService _botService;
         private readonly IConfiguration _configuration;
+        private readonly ILogger _lloger;
 
-        public TelegramBot(IBotService botService, IConfiguration configuration)
+        private Message _message;
+
+        public TelegramBot(IBotService botService, IConfiguration configuration, ILogger<TelegramBot> lloger)
         {
             _botService = botService;
             _configuration = configuration;
+            _lloger = lloger;
         }
 
         public async Task Send()
@@ -29,9 +35,8 @@ namespace AssetQuote.Infrastructure.Telegram
             var botClient = new TelegramBotClient(_configuration["BotTelegram:BotKey"]);
 
             var me = await botClient.GetMeAsync();
-            Console.WriteLine(
-                $"Hello, World! I am user {me.Id} and my name is {me.FirstName}."
-            );
+            
+            _lloger.LogInformation($"Hello, World! I am user {me.Id} and my name is {me.FirstName}.");            
 
             using var cts = new CancellationTokenSource();
 
@@ -40,8 +45,7 @@ namespace AssetQuote.Infrastructure.Telegram
                 new DefaultUpdateHandler(HandleUpdateAsync, HandleErrorAsync),
                 cts.Token);
 
-            Console.WriteLine($"Start listening for @{me.Username}");
-            Console.ReadLine();
+            _lloger.LogInformation($"Start listening for @{me.Username}");
 
             // Envie um pedido de cancelamento para parar o bot
             cts.Cancel();
@@ -54,7 +58,9 @@ namespace AssetQuote.Infrastructure.Telegram
                     _ => exception.ToString()
                 };
 
-                Console.WriteLine(ErrorMessage);
+                SentrySdk.CaptureException(exception);
+
+                _lloger.LogError(ErrorMessage);
                 return Task.CompletedTask;
             }
 
@@ -65,20 +71,24 @@ namespace AssetQuote.Infrastructure.Telegram
                 if (update.Message.Type != MessageType.Text)
                     return;
 
-                var chatId = update.Message.Chat.Id;
+                _message = update.Message;
 
-                Console.WriteLine($"Received a '{update.Message.Text}' message in chat {chatId}.");
+                _lloger.LogInformation($"Received a '{_message.Text}' message in chat {_message.Chat.Id}.");
 
-                await botClient.SendTextMessageAsync(chatId: chatId, await _botService.StartCommunication(new BotThread
-                {
-                    ChatId = chatId.ToString(),
-                    FirstName = update.Message.From.FirstName,
-                    LastName = update.Message.From.LastName,
-                    UserName = update.Message.From.Username,
-                    LastMessage = update.Message.Text,
-                    BotStep = BotStep.Start
-                }), cancellationToken: cancellationToken);
+                await botClient.SendTextMessageAsync(chatId: _message.Chat.Id, await StartCommunication(), cancellationToken: cancellationToken);
             }
+            
+            async Task<string> StartCommunication() => await _botService.StartCommunication(await BotThreadGenerate());
+
+            async Task<BotThread> BotThreadGenerate() => await Task.FromResult(new BotThread
+            {
+                ChatId = _message.Chat.Id.ToString(),
+                FirstName = _message.From.FirstName,
+                LastName = _message.From.LastName,
+                UserName = _message.From.Username,
+                LastMessage = _message.Text,
+                BotStep = BotStep.Start
+            });
         }
     }
 }

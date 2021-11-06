@@ -1,9 +1,8 @@
-﻿using AssetQuote.Domain.Interfaces.Services;
-using AssetQuote.Infrastructure.Interfaces;
-using AssetQuote.Infrastructure.WebScraping;
+﻿using AssetQuote.Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Sentry;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,10 +29,17 @@ namespace AssetQuote.Infrastructure.Workers
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                await Task.Run(async () =>
+                try
                 {
-                    await scopedProcessingService.UpdateQuote();
-                }, stoppingToken);
+                    await Task.Run(async () =>
+                    {
+                        await scopedProcessingService.UpdateQuote();
+                    }, stoppingToken);
+                }
+                catch (Exception ex)
+                {
+                    SentrySdk.CaptureException(ex);
+                }
 
                 Thread.Sleep(TimeSpan.FromMinutes(Convert.ToDouble(_configuration["WorkerTime:AssetQuote"])));
             }

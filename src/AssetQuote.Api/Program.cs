@@ -14,7 +14,8 @@ namespace AssetQuote.Api
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup<Startup>(); 
+                    webBuilder.UseSentry();
                 });
     }
 }

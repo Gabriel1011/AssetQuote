@@ -36,7 +36,6 @@ namespace AssetQuote.Infrastructure.WebScraping
                 asset.Valor = await ConvertValue(valores[0].Remove(0, 1));
                 asset.Porcentagem = await ConvertValue(valores[1]);
                 asset.ValorOcilacao = await ConvertValue(valores[2]);
-
             });
 
             async Task<double> ConvertValue(string value) =>

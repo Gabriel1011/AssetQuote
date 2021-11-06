@@ -1,11 +1,8 @@
 ﻿using AssetQuote.Domain.Entities;
 using AssetQuote.Domain.Interfaces.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace AssetQuote.Api.Controllers
