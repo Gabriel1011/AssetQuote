@@ -46,6 +46,7 @@ namespace AssetQuote.Infrastructure.Telegram
                 cts.Token);
 
             _lloger.LogInformation($"Start listening for @{me.Username}");
+            Console.ReadKey();
 
             // Envie um pedido de cancelamento para parar o bot
             cts.Cancel();
