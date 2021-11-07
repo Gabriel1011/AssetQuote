@@ -28,14 +28,15 @@ namespace AssetQuote.Api.Configuration
             services.AddTransient<IBotThreadRepository, BotThreadRepository>();
 
             services.AddTransient<IBot, TelegramBot>();
+            services.AddTransient<IBotMessage, TelegramMessageHandler>();
             services.AddTransient<IWebScraping, GoogleScraping>();
 
             services.AddDbContext<AssetContext>(options => 
                 options.UseNpgsql(configuration["dbContextSettings:ConnectionString"]));
 
+            services.AddHostedService<AssetQuoteMessageWorker>();
             services.AddHostedService<AssetQuoteWorker>();
             services.AddHostedService<BotWorker>();
-
         }
     }
 }
