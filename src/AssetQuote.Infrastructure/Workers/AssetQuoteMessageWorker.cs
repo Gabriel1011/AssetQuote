@@ -1,5 +1,4 @@
-﻿using AssetQuote.Domain.Interfaces.Repositories;
-using AssetQuote.Domain.Interfaces.Services;
+﻿using AssetQuote.Domain.Interfaces.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -21,17 +20,18 @@ namespace AssetQuote.Infrastructure.Workers
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                var scope = _serviceProvider.CreateScope();
+                if (DateTime.Now.Hour > 9 && DateTime.Now.Hour < 18)
+                {
+                    var scope = _serviceProvider.CreateScope();
+                    IBotMessage botMessage = scope.ServiceProvider.GetRequiredService<IBotMessage>();
 
-                IBotThreadRepository scopedProcessingService = scope.ServiceProvider.GetRequiredService<IBotThreadRepository>();
-                IBotMessage botMessage = scope.ServiceProvider.GetRequiredService<IBotMessage>();
-                IConsultAssetService consultAssetService = scope.ServiceProvider.GetRequiredService<IConsultAssetService>();
+                    await botMessage.GenerateMessage();
 
-                var chats = await scopedProcessingService.All();
+                    Thread.Sleep(TimeSpan.FromHours(1));
+                }
 
-                foreach (var chat in chats)
-                    await botMessage.SendMessage(chat.ChatId, await consultAssetService.ConsultAsset(chat));
-            }       
+                await Task.Run(() => Thread.Sleep(TimeSpan.FromHours(1)));
+            }
         }
     }
 }
