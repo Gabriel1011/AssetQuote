@@ -30,8 +30,8 @@ namespace AssetQuote.Infrastructure.Workers
                     Thread.Sleep(TimeSpan.FromHours(1));
                 }
 
-                await Task.Run(() => Thread.Sleep(TimeSpan.FromHours(1)));
+                await Task.Run(() => Thread.Sleep(TimeSpan.FromHours(1)), stoppingToken);
             }
         }
-    }
+    }   
 }

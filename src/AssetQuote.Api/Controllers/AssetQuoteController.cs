@@ -1,4 +1,5 @@
 ﻿using AssetQuote.Domain.Entities;
+using AssetQuote.Domain.Interfaces.Repositories;
 using AssetQuote.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -27,6 +28,15 @@ namespace AssetQuote.Api.Controllers
             var all = await _assetService.GetAllAssets();
 
             return await Task.FromResult(all);
+        }
+
+        [HttpPost]
+        public async Task CreateAssets(IEnumerable<Asset> Assets)
+        {
+            foreach (var asset in Assets)
+            {
+                await _assetService.FindOrCreateByCode(asset);
+            }
         }
     }
 }
