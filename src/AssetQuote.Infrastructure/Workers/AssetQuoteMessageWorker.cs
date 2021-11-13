@@ -1,14 +1,15 @@
-﻿using AssetQuote.Domain.Interfaces.Repositories;
+﻿using AssetQuote.Domain.Helprs;
+using AssetQuote.Domain.Interfaces.Repositories;
 using AssetQuote.Domain.Interfaces.Services;
+using AssetQuote.Infrastructure.Workers.Base;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace AssetQuote.Infrastructure.Workers
 {
-    public class AssetQuoteMessageWorker : BackgroundService
+    public class AssetQuoteMessageWorker : BaseWorker
     {
         private readonly IServiceProvider _serviceProvider;
 
@@ -29,17 +30,20 @@ namespace AssetQuote.Infrastructure.Workers
 
                 var chats = await scopedProcessingService.All();
 
-                await Task.Run(async () =>
+                if (OpenMarket.CheckOpenMarket())
                 {
-                    foreach (var chat in chats)
+                    await Task.Run(async () =>
                     {
-                        var asses = await consultAssetService.ConsultAsset(chat);
-                        await botMessage.SendMessage(chat.ChatId, asses);
-                    }
-                });
+                        foreach (var chat in chats)
+                        {
+                            var asses = await consultAssetService.ConsultAsset(chat);
+                            await botMessage.SendMessage(chat.ChatId, asses);
+                        }
+                    }, stoppingToken);
+                }
 
-                await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
-            }       
+                await DelayHours(1, stoppingToken);
+            }
         }
     }
 }

@@ -1,15 +1,16 @@
-﻿using AssetQuote.Infrastructure.Interfaces;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Sentry;
+﻿using Sentry;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using AssetQuote.Infrastructure.Interfaces;
+using AssetQuote.Infrastructure.Workers.Base;
+using Microsoft.Extensions.DependencyInjection;
+using AssetQuote.Domain.Helprs;
 
 namespace AssetQuote.Infrastructure.Workers
 {
-    public class AssetQuoteWorker : BackgroundService
+    public class AssetQuoteWorker : BaseWorker
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IConfiguration _configuration;
@@ -31,29 +32,23 @@ namespace AssetQuote.Infrastructure.Workers
             {
                 try
                 {
-                    await Task.Run(async () =>
+                    if (OpenMarket.CheckOpenMarket())
                     {
-                        await scopedProcessingService.UpdateQuote();
-                    }, stoppingToken);
+                        await Task.Run(async () =>
+                        {
+                            await scopedProcessingService.UpdateQuote();
+                        }, stoppingToken);
+                    }
                 }
                 catch (Exception ex)
                 {
                     SentrySdk.CaptureException(ex);
                 }
 
-                await Task.Delay(TimeSpan.FromMinutes(Convert.ToDouble(_configuration["WorkerTime:AssetQuote"])), stoppingToken);
+                await DelayMinutes(Convert.ToDouble(_configuration["WorkerTime:AssetQuote"]), stoppingToken);
             }
 
             await Task.CompletedTask;
-        }
-
-        private async Task<bool> CheckOpenIBOV()
-        {
-            return await Task.Run(() =>
-            {
-                var now = DateTime.Now;
-                return Convert.ToInt32(_configuration["Quote:Start"]) > now.Hour && now.Hour < Convert.ToInt32(_configuration["Quote:end"]);
-            });
         }
     }
 }
