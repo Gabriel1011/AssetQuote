@@ -29,8 +29,16 @@ namespace AssetQuote.Infrastructure.Workers
 
                 var chats = await scopedProcessingService.All();
 
-                foreach (var chat in chats)
-                    await botMessage.SendMessage(chat.ChatId, await consultAssetService.ConsultAsset(chat));
+                await Task.Run(async () =>
+                {
+                    foreach (var chat in chats)
+                    {
+                        var asses = await consultAssetService.ConsultAsset(chat);
+                        await botMessage.SendMessage(chat.ChatId, asses);
+                    }
+                });
+
+                await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
             }       
         }
     }
