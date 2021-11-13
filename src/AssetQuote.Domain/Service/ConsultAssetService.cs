@@ -3,7 +3,7 @@ using AssetQuote.Domain.Entities.Enuns;
 using AssetQuote.Domain.Interfaces.Repositories;
 using AssetQuote.Domain.Interfaces.Services;
 using AssetQuote.Domain.Service.Base;
-using System.Globalization;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,14 +23,13 @@ namespace AssetQuote.Domain.Service
 
             thread = await _botRepository.GetBotThreadByChatId(thread.ChatId);
 
-            var assets = thread.Assets.Select(
-                    p => string.Format(
-                        $"Ativo: {p.Code} Valor: R$ {p.Valor} \nPorcentagem: {p.Porcentagem}% Valor Ocilação: R$ {p.ValorOcilacao}",
-                        new CultureInfo("pt-BR")
-                    )
-                );
-
-            return await Task.FromResult(assets.Any() ? string.Join("\n\n", assets) : "Para consultar é necessário cadastrar um ativo antes.");
+            return await GenerateAssetList(thread.Assets);
         }
+
+        private async Task<string> GenerateAssetList(IEnumerable<Asset> assets) =>
+            await Task.FromResult(
+                assets.Any() ? 
+                    string.Join("\n\n", assets.Select(p => string.Format( $"Ativo: {p.Code} Valor: R$ {p.Valor} \nPorcentagem: {p.Porcentagem}% Valor Ocilação: R$ {p.ValorOcilacao}"))) : 
+                "Para consultar é necessário cadastrar um ativo antes.");
     }
 }
