@@ -2,6 +2,7 @@
 using AssetQuote.Domain.Interfaces.Repositories;
 using AssetQuote.Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Sentry;
 using System;
 using System.Linq;
 using System.Net;
@@ -24,16 +25,20 @@ namespace AssetQuote.Infrastructure.WebScraping
         {
             await Task.Run(async () =>
             {
-                var link = string.Format(_configuration["WebScraping:StatusInvestUrl"], asset.Code);
-                var pag = new WebClient().DownloadString(link);
+                var page = await GetPage(asset.Code);
+                var valores = await GetValuesAsset(page);
 
-                var valores = pag.Split(new char[] { '<', '>' })
-                .FirstOrDefault(p => p.Contains("\"BRL\",["))
-                .Split(',')[8..11];
-
-                asset.Porcentagem = await ConvertValue(valores[1]);
-                asset.Valor = await ConvertValue(valores[0].Remove(0, 1));
-                asset.ValorOcilacao = await ConvertValue(valores[2]);
+                try
+                {
+                    asset.Porcentagem = await ConvertValue(valores[1]);
+                    asset.Valor = await ConvertValue(valores[0].Remove(0, 1));
+                    asset.ValorOcilacao = await ConvertValue(valores[2]);
+                }
+                catch (Exception ex)
+                {
+                    SentrySdk.CaptureException(ex);
+                    SentrySdk.CaptureMessage("Valores obtidos da página do Google" + string.Join(',', valores), SentryLevel.Error);
+                }
 
             });
 
@@ -42,6 +47,17 @@ namespace AssetQuote.Infrastructure.WebScraping
             return await Task.FromResult(asset);
         }
 
+        private async Task<string> GetPage(string code)
+        {
+            var link = string.Format(_configuration["WebScraping:StatusInvestUrl"], code);
+            return await Task.FromResult(new WebClient().DownloadString(link));
+        }
+
+        private async Task<string[]> GetValuesAsset(string page) => 
+            await Task.FromResult(page.Split(new char[] { '<', '>' })
+                .FirstOrDefault(p => p.Contains("\"BRL\",["))
+                .Split(',')[8..11]);
+        
         public async Task UpdateQuote()
         {
             var assets = await _assetRepository.All();
