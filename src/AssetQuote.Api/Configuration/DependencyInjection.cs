@@ -11,6 +11,7 @@ using AssetQuote.Infrastructure.Workes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace AssetQuote.Api.Configuration
 {
@@ -31,8 +32,9 @@ namespace AssetQuote.Api.Configuration
             services.AddTransient<IBotMessage, TelegramMessageHandler>();
             services.AddTransient<IWebScraping, GoogleScraping>();
 
-            services.AddDbContext<AssetContext>(options => 
-                options.UseNpgsql(configuration["dbContextSettings:ConnectionString"]));
+            services.AddDbContext<AssetContext>(options =>
+                options.UseNpgsql(configuration["dbContextSettings:ConnectionString"],
+                p => p.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(1), errorCodesToAdd: null)));
 
             services.AddHostedService<AssetQuoteMessageWorker>();
             services.AddHostedService<AssetQuoteWorker>();
