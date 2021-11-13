@@ -60,8 +60,6 @@ namespace AssetQuote.Infrastructure.Data
             }
 
             await base.SaveChangesAsync();
-
-            await DetachAllEntities();
         }
 
         private void MapForgottenProperties(ModelBuilder modelBuilder)
