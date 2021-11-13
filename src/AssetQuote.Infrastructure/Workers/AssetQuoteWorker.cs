@@ -41,7 +41,7 @@ namespace AssetQuote.Infrastructure.Workers
                     SentrySdk.CaptureException(ex);
                 }
 
-                Thread.Sleep(TimeSpan.FromMinutes(Convert.ToDouble(_configuration["WorkerTime:AssetQuote"])));
+                await Task.Delay(TimeSpan.FromMinutes(Convert.ToDouble(_configuration["WorkerTime:AssetQuote"])), stoppingToken);
             }
 
             await Task.CompletedTask;
