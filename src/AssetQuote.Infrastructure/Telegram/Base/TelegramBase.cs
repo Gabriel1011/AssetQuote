@@ -1,7 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
-using System.Threading.Tasks;
-using Telegram.Bot;
-using Telegram.Bot.Types;
+﻿using Telegram.Bot;
+using User = Telegram.Bot.Types.User;
 
 namespace AssetQuote.Infrastructure.Telegram.Base
 {

@@ -1,8 +1,8 @@
+using AssetQuote.Data.Data;
 using AssetQuote.Data.Repositories;
 using AssetQuote.Domain.Interfaces.Repositories;
 using AssetQuote.Domain.Interfaces.Services;
 using AssetQuote.Domain.Service;
-using AssetQuote.Infrastructure.Data;
 using AssetQuote.Infrastructure.Interfaces;
 using AssetQuote.Infrastructure.Telegram;
 using AssetQuote.Infrastructure.WebScraping;

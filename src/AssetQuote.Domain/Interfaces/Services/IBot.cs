@@ -1,9 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿namespace AssetQuote.Domain.Interfaces.Services;
 
-namespace AssetQuote.Domain.Interfaces.Services
+public interface IBot
 {
-    public interface IBot
-    {
-        public Task Send();
-    }
+    public Task Send();
 }

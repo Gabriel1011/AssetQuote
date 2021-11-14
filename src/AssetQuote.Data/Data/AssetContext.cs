@@ -1,81 +1,74 @@
-using AssetQuote.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+namespace AssetQuote.Data.Data;
 
-namespace AssetQuote.Infrastructure.Data
+public class AssetContext : DbContext
 {
-    public class AssetContext : DbContext
+    public DbSet<Asset> Asset { get; set; }
+    public DbSet<BotThread> BotThread { get; set; }
+
+    public AssetContext(DbContextOptions<AssetContext> option) : base(option)
     {
-        public DbSet<Asset> Asset { get; set; }
-        public DbSet<BotThread> BotThread { get; set; }
+        Database.EnsureCreated();
+    }
 
-        public AssetContext(DbContextOptions<AssetContext> option) : base(option)
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AssetContext).Assembly);
+        MapForgottenProperties(modelBuilder);
+    }
+
+    public async Task DetachAllEntities()
+    {
+        ChangeTracker.Clear();
+
+        var changedEntriesCopy = ChangeTracker.Entries()
+            .Where(e => e.State == EntityState.Added ||
+                        e.State == EntityState.Modified ||
+                        e.State == EntityState.Deleted)
+            .ToList();
+
+        foreach (var entry in changedEntriesCopy)
+            entry.State = EntityState.Detached;
+
+        await Task.CompletedTask;
+    }
+
+    public async Task Commit()
+    {
+        foreach (var entry in ChangeTracker.Entries().Where(entry => entry.State == EntityState.Added || entry.State == EntityState.Modified))
         {
-            Database.EnsureCreated();
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AssetContext).Assembly);
-            MapForgottenProperties(modelBuilder);
-        }
-
-        public async Task DetachAllEntities()
-        {
-            this.ChangeTracker.Clear();
-
-            var changedEntriesCopy = this.ChangeTracker.Entries()
-                .Where(e => e.State == EntityState.Added ||
-                            e.State == EntityState.Modified ||
-                            e.State == EntityState.Deleted)
-                .ToList();
-
-            foreach (var entry in changedEntriesCopy)
-                entry.State = EntityState.Detached;
-
-            await Task.CompletedTask;
-        }
-
-        public async Task Commit()
-        {
-            foreach (var entry in ChangeTracker.Entries().Where(entry => entry.State == EntityState.Added || entry.State == EntityState.Modified))
+            if (entry.State == EntityState.Added)
             {
-                if (entry.State == EntityState.Added)
-                {
-                    entry.Property("CreatedAt").CurrentValue = DateTime.Now;
-                    entry.Property("Active").CurrentValue = true;
-                }
-
-                if (entry.State == EntityState.Modified)
-                {
-                    entry.Property("UpdatedAt").CurrentValue = DateTime.Now;
-                    entry.Property("CreatedAt").IsModified = false;
-                }
+                entry.Property("CreatedAt").CurrentValue = DateTime.Now;
+                entry.Property("Active").CurrentValue = true;
             }
 
-            await base.SaveChangesAsync();
+            if (entry.State == EntityState.Modified)
+            {
+                entry.Property("UpdatedAt").CurrentValue = DateTime.Now;
+                entry.Property("CreatedAt").IsModified = false;
+            }
         }
 
-        private void MapForgottenProperties(ModelBuilder modelBuilder)
+        await base.SaveChangesAsync();
+    }
+
+    private void MapForgottenProperties(ModelBuilder modelBuilder)
+    {
+
+        foreach (var entity in modelBuilder.Model.GetEntityTypes())
         {
+            var propriedades = entity.GetProperties().Where(p => p.ClrType == typeof(string));
 
-            foreach (var entity in modelBuilder.Model.GetEntityTypes())
+            foreach (var propriedade in propriedades)
             {
-                var propriedades = entity.GetProperties().Where(p => p.ClrType == typeof(string));
-
-                foreach (var propriedade in propriedades)
+                if (string.IsNullOrEmpty(propriedade.GetColumnType()) && !propriedade.GetMaxLength().HasValue)
                 {
-                    if (string.IsNullOrEmpty(propriedade.GetColumnType()) && !propriedade.GetMaxLength().HasValue)
-                    {
-                        //propriedade.SetMaxLength(100);
-                        propriedade.SetColumnType("VARCHAR(200)");
-                    }
+                    //propriedade.SetMaxLength(100);
+                    propriedade.SetColumnType("VARCHAR(200)");
                 }
             }
         }

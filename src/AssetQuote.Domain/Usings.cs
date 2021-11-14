@@ -1,0 +1,9 @@
+﻿global using System;
+global using System.Linq;
+global using System.Threading.Tasks;
+global using AssetQuote.Domain.Entities;
+global using System.Collections.Generic;
+global using AssetQuote.Domain.Service.Base;
+global using AssetQuote.Domain.Entities.Enuns;
+global using AssetQuote.Domain.Interfaces.Services;
+global using AssetQuote.Domain.Interfaces.Repositories;

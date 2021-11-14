@@ -1,13 +1,7 @@
-﻿using AssetQuote.Domain.Entities;
-using AssetQuote.Domain.Entities.Enuns;
+﻿using AssetQuote.Domain.Entities.Enuns;
 using AssetQuote.Domain.Interfaces.Services;
 using AssetQuote.Infrastructure.Telegram.Base;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Sentry;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Extensions.Polling;

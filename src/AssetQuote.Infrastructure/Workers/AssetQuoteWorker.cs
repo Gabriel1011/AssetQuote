@@ -1,14 +1,4 @@
-﻿using Sentry;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using AssetQuote.Infrastructure.Interfaces;
-using AssetQuote.Infrastructure.Workers.Base;
-using Microsoft.Extensions.DependencyInjection;
-using AssetQuote.Domain.Helprs;
-
-namespace AssetQuote.Infrastructure.Workers
+﻿namespace AssetQuote.Infrastructure.Workers
 {
     public class AssetQuoteWorker : BaseWorker
     {

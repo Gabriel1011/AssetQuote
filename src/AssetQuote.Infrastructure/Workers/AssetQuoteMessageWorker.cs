@@ -1,11 +1,4 @@
-﻿using AssetQuote.Domain.Helprs;
-using AssetQuote.Domain.Interfaces.Repositories;
-using AssetQuote.Domain.Interfaces.Services;
-using AssetQuote.Infrastructure.Workers.Base;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using AssetQuote.Domain.Interfaces.Services;
 
 namespace AssetQuote.Infrastructure.Workers
 {

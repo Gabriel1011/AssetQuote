@@ -1,10 +1,8 @@
-using AssetQuote.Domain.Entities;
 using AssetQuote.Domain.Interfaces.Repositories.Base;
 
-namespace AssetQuote.Domain.Interfaces.Repositories
+namespace AssetQuote.Domain.Interfaces.Repositories;
+
+public interface IAssetRepository : IBaseRepository<Asset>
 {
-    public interface IAssetRepository : IBaseRepository<Asset>
-    { 
-    
-    }
+
 }

@@ -1,9 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿namespace AssetQuote.Domain.Interfaces.Services;
 
-namespace AssetQuote.Domain.Interfaces.Services
+public interface IBotMessage
 {
-    public interface IBotMessage
-    {
-        Task SendMessage(string chatId, string message);
-    }
+    Task SendMessage(string chatId, string message);
 }

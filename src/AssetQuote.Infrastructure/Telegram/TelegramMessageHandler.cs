@@ -1,7 +1,5 @@
 ﻿using AssetQuote.Domain.Interfaces.Services;
 using AssetQuote.Infrastructure.Telegram.Base;
-using Microsoft.Extensions.Configuration;
-using System.Threading.Tasks;
 
 namespace AssetQuote.Infrastructure.Telegram
 {

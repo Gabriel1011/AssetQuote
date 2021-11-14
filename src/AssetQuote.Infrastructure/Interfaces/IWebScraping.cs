@@ -1,7 +1,4 @@
-﻿using AssetQuote.Domain.Entities;
-using System.Threading.Tasks;
-
-namespace AssetQuote.Infrastructure.Interfaces
+﻿namespace AssetQuote.Infrastructure.Interfaces
 {
     public interface IWebScraping
     {
