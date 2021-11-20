@@ -1,3 +1,5 @@
+using AssetQuote.Domain.Helprs;
+
 namespace AssetQuote.Data.Data;
 
 public class AssetContext : DbContext
@@ -42,13 +44,13 @@ public class AssetContext : DbContext
         {
             if (entry.State == EntityState.Added)
             {
-                entry.Property("CreatedAt").CurrentValue = DateTime.Now;
+                entry.Property("CreatedAt").CurrentValue = BrazilianDate.Now;
                 entry.Property("Active").CurrentValue = true;
             }
 
             if (entry.State == EntityState.Modified)
             {
-                entry.Property("UpdatedAt").CurrentValue = DateTime.Now;
+                entry.Property("UpdatedAt").CurrentValue = BrazilianDate.Now;
                 entry.Property("CreatedAt").IsModified = false;
             }
         }
