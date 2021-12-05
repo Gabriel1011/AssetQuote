@@ -2,6 +2,7 @@
 using AssetQuote.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -28,5 +29,8 @@ namespace AssetQuote.Api.Controllers
 
             return await Task.FromResult(all);
         }
+
+        [HttpDelete("{id:guid}")]
+        public async Task Delete(Guid id) => await _assetService.Delete(id);
     }
 }

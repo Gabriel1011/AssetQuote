@@ -34,4 +34,10 @@ public class AssetService : IAssetService
 
         await _botThreadRepository.Update(thread);
     }
+
+    public async Task Delete(Guid assetId) 
+    {
+        var asset = await _assetRepository.Find(assetId);
+        await _assetRepository.Delete(asset);
+    }     
 }

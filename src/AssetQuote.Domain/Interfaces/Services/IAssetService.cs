@@ -6,4 +6,5 @@ public interface IAssetService
     public Task<Asset> AddAsset(Asset asset);
     public Task<Asset> FindOrCreateByCode(Asset asset);
     public Task ConnectChatAsset(BotThread thread, Asset asset);
+    public Task Delete(Guid assetId);
 }
