@@ -6,7 +6,6 @@ global using System.Threading.Tasks;
 global using AssetQuote.Domain.Helprs;
 global using AssetQuote.Domain.Entities;
 global using Microsoft.Extensions.Configuration;
-global using AssetQuote.Infrastructure.Interfaces;
 global using AssetQuote.Infrastructure.Workers.Base;
 global using Microsoft.Extensions.DependencyInjection;
 global using AssetQuote.Domain.Interfaces.Repositories;

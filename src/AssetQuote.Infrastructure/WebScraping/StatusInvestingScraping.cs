@@ -1,4 +1,6 @@
-﻿namespace AssetQuote.Infrastructure.WebScraping;
+﻿using AssetQuote.Domain.Interfaces.ExternalService;
+
+namespace AssetQuote.Infrastructure.WebScraping;
 public class StatusInvestingScraping : BaseWebScraping, IWebScraping
 {
     private readonly IAssetRepository _assetRepository;
@@ -19,9 +21,9 @@ public class StatusInvestingScraping : BaseWebScraping, IWebScraping
 
             try
             {
-                asset.Porcentagem = await ConvertValue(valores[1]);
-                asset.Valor = await ConvertValue(valores[0].Remove(0, 1));
-                asset.ValorOcilacao = await ConvertValue(valores[2]);
+                asset.Percentage = await ConvertValue(valores[1]);
+                asset.Value = await ConvertValue(valores[0].Remove(0, 1));
+                asset.OcillationValue = await ConvertValue(valores[2]);
             }
             catch (Exception ex)
             {
@@ -41,26 +43,29 @@ public class StatusInvestingScraping : BaseWebScraping, IWebScraping
             .FirstOrDefault(p => p.Contains("\"BRL\",["))
             .Split(',')[8..11]);
 
-    public async Task UpdateQuote()
+    public async Task UpdateAllQuote()
     {
         var assets = await _assetRepository.All();
 
         await Task.Run(async () =>
         {
             foreach (var asset in assets)
-            {
-                var assetUpdated = await ReadPage(asset);
-
-                try
-                {                    
-                    await _assetRepository.Update(assetUpdated);
-                }
-                catch (Exception ex)
-                {
-                    SentrySdk.CaptureException(ex);
-                    SentrySdk.CaptureMessage("Valores obtidos da página do Google" + string.Join(',', assetUpdated), SentryLevel.Error);
-                }
-            }
+                await UpdateQuote(asset);
         });
+    }
+
+    public async Task UpdateQuote(Asset asset)
+    {
+        var assetUpdated = await ReadPage(asset);
+
+        try
+        {
+            await _assetRepository.Update(assetUpdated);
+        }
+        catch (Exception ex)
+        {
+            SentrySdk.CaptureException(ex);
+            SentrySdk.CaptureMessage("Valores obtidos da página do Google" + string.Join(',', assetUpdated), SentryLevel.Error);
+        }
     }
 }
