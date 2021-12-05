@@ -1,4 +1,6 @@
-﻿namespace AssetQuote.Infrastructure.Workers
+﻿using AssetQuote.Domain.Interfaces.ExternalService;
+
+namespace AssetQuote.Infrastructure.Workers
 {
     public class AssetQuoteWorker : BaseWorker
     {
@@ -26,7 +28,7 @@
                     {
                         await Task.Run(async () =>
                         {
-                            await scopedProcessingService.UpdateQuote();
+                            await scopedProcessingService.UpdateAllQuote();
                         }, stoppingToken);
                     }
                 }
@@ -37,7 +39,7 @@
 
                 await DelayMinutes(Convert.ToDouble(_configuration["WorkerTime:AssetQuote"]), stoppingToken);
             }
-
+            
             await Task.CompletedTask;
         }
     }

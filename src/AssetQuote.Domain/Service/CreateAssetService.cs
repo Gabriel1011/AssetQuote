@@ -1,11 +1,17 @@
-﻿namespace AssetQuote.Domain.Service;
+﻿using AssetQuote.Domain.Interfaces.ExternalService;
+
+namespace AssetQuote.Domain.Service;
 public class CreateAssetService : BaseAssetService, ICreateAssetService
 {
     private readonly IAssetService _assetService;
+    private readonly IWebScraping _webScraping;
 
-    public CreateAssetService(IAssetService assetService, IBotThreadRepository bot) : base(bot)
+    public CreateAssetService(IAssetService assetService, 
+        IBotThreadRepository bot, 
+        IWebScraping webScraping) : base(bot)
     {
         _assetService = assetService;
+        _webScraping = webScraping;
     }
 
     public async Task<string> CreateNewAsset(BotThread thread)
@@ -29,6 +35,8 @@ public class CreateAssetService : BaseAssetService, ICreateAssetService
             });
 
             await _assetService.ConnectChatAsset(thread, asset);
+
+            await _webScraping.UpdateQuote(asset);
         }
 
         return await Task.FromResult($"{thread.LastMessage} criado com sucesso!!");
