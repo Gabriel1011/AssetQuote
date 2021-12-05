@@ -48,7 +48,19 @@ public class StatusInvestingScraping : BaseWebScraping, IWebScraping
         await Task.Run(async () =>
         {
             foreach (var asset in assets)
-                await _assetRepository.Update(await ReadPage(asset));
+            {
+                var assetUpdated = await ReadPage(asset);
+
+                try
+                {                    
+                    await _assetRepository.Update(assetUpdated);
+                }
+                catch (Exception ex)
+                {
+                    SentrySdk.CaptureException(ex);
+                    SentrySdk.CaptureMessage("Valores obtidos da página do Google" + string.Join(',', assetUpdated), SentryLevel.Error);
+                }
+            }
         });
     }
 }
